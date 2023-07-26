@@ -8,6 +8,7 @@ namespace AssetTracking
 {
     internal class Computer : Asset
     {
+        // child class for computers
         public Computer(string brand, string model, int price, DateTime date) 
         {
             this.model = model;

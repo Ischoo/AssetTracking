@@ -8,6 +8,7 @@ namespace AssetTracking
 {
     internal class Phone : Asset
     {
+        // child class for phones
         public Phone(string brand, string model, int price, DateTime date) 
         {
             this.model = model;

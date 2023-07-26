@@ -1,0 +1,15 @@
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\bin\Debug\net6.0\AssetTracking.exe
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\bin\Debug\net6.0\AssetTracking.deps.json
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\bin\Debug\net6.0\AssetTracking.runtimeconfig.json
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\bin\Debug\net6.0\AssetTracking.dll
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\bin\Debug\net6.0\AssetTracking.pdb
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.csproj.AssemblyReference.cache
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.AssemblyInfoInputs.cache
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.AssemblyInfo.cs
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.csproj.CoreCompileInputs.cache
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.dll
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\refint\AssetTracking.dll
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.pdb
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\AssetTracking.genruntimeconfig.cache
+C:\Users\allan\Desktop\LexiconCode\AssetTracking\AssetTracking\obj\Debug\net6.0\ref\AssetTracking.dll
