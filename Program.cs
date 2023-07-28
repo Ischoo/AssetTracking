@@ -1,11 +1,15 @@
 ﻿
 using AssetTracking;
 
+
+TestData data = new TestData();
 List<Asset> products = new List<Asset>();
 List<Office> offices = new List<Office>();
-TestData data = new TestData();
-products.AddRange(data.getList());
+
 offices.AddRange(data.getOffice());
+
+products.AddRange(data.getList()); // comment this line if no testdata should be added
+
 Console.WriteLine("Write \"Exit\" at any point to exit program");
 
 while (true)
