@@ -2,17 +2,54 @@
 using AssetTracking;
 
 List<Asset> products = new List<Asset>();
+TestData data = new TestData();
+products.AddRange(data.getList());
 
 
 while (true)
 {
     // starting point, ask if user wants to add an asset
     Console.WriteLine("Press 'A' to add new asset");
+    Console.WriteLine("Press 'P' to print all assets");
     string input = Console.ReadLine();
     if (input.ToLower().Trim() == "a")
     {
         addAsset();
     }
+    else if (input.ToLower().Trim() == "p")
+    {
+        printList();
+    }
+}
+
+void printList()
+{
+    List<Asset> sortedList = sortAssets();
+    Console.WriteLine("Type".PadRight(15) + "Brand".PadRight(15) + "Model".PadRight(15) + "Purchase Date".PadRight(15) + "Price ($)");
+    Console.WriteLine("".PadRight(70, '-'));
+
+    foreach (Asset asset in sortedList)
+    {
+        printAsset(asset);
+    }
+}
+
+void printAsset(Asset asset)
+{
+    bool red = printRed(asset);
+    if (red) { Console.ForegroundColor = ConsoleColor.Red; }
+    Console.WriteLine(asset.GetType().Name.PadRight(15) + asset.brand.PadRight(15) + asset.model.PadRight(15) + asset.purchaseDate.ToString("yyyy/MM/dd").PadRight(15) + asset.price);
+    Console.ResetColor();
+}
+
+bool printRed(Asset asset)
+{
+    return asset.purchaseDate.AddYears(3) < DateTime.Now.AddMonths(3);
+}
+
+List<Asset> sortAssets()
+{
+    return products.OrderBy(c => c.ToString()).ThenBy(d => d.purchaseDate).ToList();
 }
 
 
@@ -22,11 +59,11 @@ void addAsset()
     int i = 0;
     Console.WriteLine("Add asset information:");
     string input;
-    int type;
-    string brand;
-    string model;
-    int price;
-    DateTime date;
+    int type = 0;
+    string brand = "";
+    string model = "";
+    int price = 0;
+    DateTime date = new DateTime();
     while (i < 5)
     {
         input = "";
@@ -129,6 +166,15 @@ void addAsset()
         }
     }
 
+    if (type == 1)
+    {
+        products.Add(new Phone(brand, model, price, date));
+    }
+    else if(type == 2)
+    {
+        products.Add(new Computer(brand, model, price, date));
+    }
+
 }
 
 DateTime getDate()
@@ -171,7 +217,22 @@ DateTime getDate()
     }
     try
     {
-        return new DateTime(y, m, d);
+        DateTime addedDate = new DateTime(y, m, d);
+        if(addedDate > DateTime.Now)
+        {
+            try
+            {
+                throw new ArgumentOutOfRangeException("Can't add a future date");
+            } catch (ArgumentOutOfRangeException) 
+            { 
+                Console.WriteLine("Can't add a future date");
+                return getDate();
+            }
+        }
+        else
+        {
+            return addedDate;
+        }
     } catch (ArgumentOutOfRangeException) 
     {
         Console.WriteLine("Can't create date");
