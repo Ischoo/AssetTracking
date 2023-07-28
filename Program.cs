@@ -10,7 +10,7 @@ Console.WriteLine("Write \"Exit\" at any point to exit program");
 
 while (true)
 {
-    // starting point, ask if user wants to add an asset
+    // starting point, ask if user wants to add an asset or to print the list
     Console.WriteLine("Press: 'A' to add | 'P' to print");
     
     string input = Console.ReadLine();
@@ -23,15 +23,18 @@ while (true)
     {
         printList();
     }
+    else { Console.WriteLine("Invalid input"); }
 }
 
 bool userExit(string input)
 {
+    // check if user wants to exit the program
     return input.ToLower().Trim() == "exit";
 }
 
 void printList()
 {
+    // method that begins the printing process, starting with the titles
     List<Asset> sortedList = sortAssets();
     Console.WriteLine("Type".PadRight(15) + "Brand".PadRight(15) + "Model".PadRight(15) + "Country".PadRight(15) + "Purchase Date".PadRight(15) 
         + "Price ($)".PadRight(15) + "Currency".PadRight(15) + "Local price");
@@ -45,6 +48,8 @@ void printList()
 
 void printAsset(Asset asset)
 {
+    // method that prints information about an asset
+    // set text color to red or yellow if date is in correct range
     
     if (printRed(asset)) { Console.ForegroundColor = ConsoleColor.Red; }
     else if(printYellow(asset)) { Console.ForegroundColor = ConsoleColor.Yellow; }
@@ -55,21 +60,27 @@ void printAsset(Asset asset)
 
 bool printYellow(Asset asset)
 {
+    // check yellow, if within 6 months of end date
     return asset.purchaseDate.AddYears(3) < DateTime.Now.AddMonths(6);
-}
-
-string getLocalPrice(Asset asset)
-{
-    return (Convert.ToDouble(asset.price) / asset.office.exchange).ToString("N2");
 }
 
 bool printRed(Asset asset)
 {
+    // check red, if within 3 months of end date
     return asset.purchaseDate.AddYears(3) < DateTime.Now.AddMonths(3);
 }
 
+string getLocalPrice(Asset asset)
+{
+    // convert dollar prices to local currency
+    return (Convert.ToDouble(asset.price) / asset.office.exchange).ToString("N2");
+}
+
+
+
 List<Asset> sortAssets()
 {
+    // sort list, by office then by purchase date
     return products.OrderBy(c => c.office.country).ThenBy(d => d.purchaseDate).ToList();
 }
 
@@ -91,7 +102,7 @@ void addAsset()
         input = "";
         switch (i)
         {
-            case 0:
+            case 0: // check if user wants to add a phone or computer
                 Console.Write("".PadRight(10) + "Asset type: Phone (1) or Computer (2) ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -115,7 +126,7 @@ void addAsset()
                     Console.WriteLine("Input needs to be a number");
                 }
                 break;
-            case 1:
+            case 1: // check brand name for the asset
                 Console.Write("".PadRight(10) + "Enter brand name: ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -135,7 +146,7 @@ void addAsset()
                     i++;
                 }
                 break;
-            case 2:
+            case 2: // check model name for the asset
                 Console.Write("".PadRight(10) + "Enter model name: ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -156,7 +167,7 @@ void addAsset()
                     i++;
                 }
                 break;
-            case 3:
+            case 3: // check asset price in dollars
                 Console.Write("".PadRight(10) + "Enter asset price in dollars: ");
                 input= Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -182,12 +193,12 @@ void addAsset()
                     Console.WriteLine("Input needs to be a number");
                 }
                 break;
-            case 4:
+            case 4: // check purchase date, seperate method
                 Console.WriteLine("".PadRight(10) + "Enter purchase date: ");
                 date = getDate();
                 i++;
                 break;
-            case 5:
+            case 5: // check local office for asset
                 Console.WriteLine("".PadRight(10) + "Enter local office: Spain (1) | UK (2) | Sweden (3)");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -218,7 +229,7 @@ void addAsset()
 
         }
     }
-
+    // add asset to list based on input
     if (type == 1)
     {
         products.Add(new Phone(brand, model, price, date, offices[office]));
@@ -232,6 +243,7 @@ void addAsset()
 
 DateTime getDate()
 {
+    // method to set purchase date of the asset
     int j = 0;
     string input;
     int y = 0, m = 0, d = 0;
@@ -240,7 +252,7 @@ DateTime getDate()
     {
         switch(j)
         {
-            case 0:
+            case 0: // set year
                 Console.Write("".PadRight(20) + "Year: ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -250,7 +262,7 @@ DateTime getDate()
                     j++;
                 } catch (FormatException) { Console.WriteLine("Input needs to be a number"); }
                 break;
-            case 1:
+            case 1: // set month
                 Console.Write("".PadRight(20) + "Month: ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -261,7 +273,7 @@ DateTime getDate()
                 }
                 catch (FormatException) { Console.WriteLine("Input needs to be a number"); }
                 break;
-            case 2:
+            case 2: // set day
                 Console.Write("".PadRight(20) + "Day: ");
                 input = Console.ReadLine();
                 if (userExit(input)) { Environment.Exit(0); }
@@ -277,7 +289,7 @@ DateTime getDate()
     }
     try
     {
-        DateTime addedDate = new DateTime(y, m, d);
+        DateTime addedDate = new DateTime(y, m, d); // try to create a date
         if(addedDate > DateTime.Now)
         {
             try
@@ -286,7 +298,7 @@ DateTime getDate()
             } catch (ArgumentOutOfRangeException) 
             { 
                 Console.WriteLine("Can't add a future date");
-                return getDate();
+                return getDate(); // can't add a future date, let user try again
             }
         }
         else
@@ -296,6 +308,6 @@ DateTime getDate()
     } catch (ArgumentOutOfRangeException) 
     {
         Console.WriteLine("Can't create date");
-        return getDate(); 
+        return getDate(); // if date can't be created, let user try again
     }
 }
