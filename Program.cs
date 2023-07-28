@@ -2,16 +2,19 @@
 using AssetTracking;
 
 List<Asset> products = new List<Asset>();
+List<Office> offices = new List<Office>();
 TestData data = new TestData();
 products.AddRange(data.getList());
-
+offices.AddRange(data.getOffice());
+Console.WriteLine("Write \"Exit\" at any point to exit program");
 
 while (true)
 {
     // starting point, ask if user wants to add an asset
-    Console.WriteLine("Press 'A' to add new asset");
-    Console.WriteLine("Press 'P' to print all assets");
+    Console.WriteLine("Press: 'A' to add | 'P' to print");
+    
     string input = Console.ReadLine();
+    if(userExit(input)) { Environment.Exit(0); }
     if (input.ToLower().Trim() == "a")
     {
         addAsset();
@@ -22,11 +25,17 @@ while (true)
     }
 }
 
+bool userExit(string input)
+{
+    return input.ToLower().Trim() == "exit";
+}
+
 void printList()
 {
     List<Asset> sortedList = sortAssets();
-    Console.WriteLine("Type".PadRight(15) + "Brand".PadRight(15) + "Model".PadRight(15) + "Purchase Date".PadRight(15) + "Price ($)");
-    Console.WriteLine("".PadRight(70, '-'));
+    Console.WriteLine("Type".PadRight(15) + "Brand".PadRight(15) + "Model".PadRight(15) + "Country".PadRight(15) + "Purchase Date".PadRight(15) 
+        + "Price ($)".PadRight(15) + "Currency".PadRight(15) + "Local price");
+    Console.WriteLine("".PadRight(130, '-'));
 
     foreach (Asset asset in sortedList)
     {
@@ -36,10 +45,22 @@ void printList()
 
 void printAsset(Asset asset)
 {
-    bool red = printRed(asset);
-    if (red) { Console.ForegroundColor = ConsoleColor.Red; }
-    Console.WriteLine(asset.GetType().Name.PadRight(15) + asset.brand.PadRight(15) + asset.model.PadRight(15) + asset.purchaseDate.ToString("yyyy/MM/dd").PadRight(15) + asset.price);
+    
+    if (printRed(asset)) { Console.ForegroundColor = ConsoleColor.Red; }
+    else if(printYellow(asset)) { Console.ForegroundColor = ConsoleColor.Yellow; }
+    Console.WriteLine(asset.GetType().Name.PadRight(15) + asset.brand.PadRight(15) + asset.model.PadRight(15) + asset.office.country.PadRight(15) + 
+        asset.purchaseDate.ToString("yyyy/MM/dd").PadRight(15) + asset.price.ToString().PadRight(15) + asset.office.currency.PadRight(15) + getLocalPrice(asset));
     Console.ResetColor();
+}
+
+bool printYellow(Asset asset)
+{
+    return asset.purchaseDate.AddYears(3) < DateTime.Now.AddMonths(6);
+}
+
+string getLocalPrice(Asset asset)
+{
+    return (Convert.ToDouble(asset.price) / asset.office.exchange).ToString("N2");
 }
 
 bool printRed(Asset asset)
@@ -49,7 +70,7 @@ bool printRed(Asset asset)
 
 List<Asset> sortAssets()
 {
-    return products.OrderBy(c => c.ToString()).ThenBy(d => d.purchaseDate).ToList();
+    return products.OrderBy(c => c.office.country).ThenBy(d => d.purchaseDate).ToList();
 }
 
 
@@ -63,8 +84,9 @@ void addAsset()
     string brand = "";
     string model = "";
     int price = 0;
+    int office = 0;
     DateTime date = new DateTime();
-    while (i < 5)
+    while (i < 6)
     {
         input = "";
         switch (i)
@@ -72,6 +94,7 @@ void addAsset()
             case 0:
                 Console.Write("".PadRight(10) + "Asset type: Phone (1) or Computer (2) ");
                 input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 try
                 {
                     type = int.Parse(input);
@@ -95,7 +118,8 @@ void addAsset()
             case 1:
                 Console.Write("".PadRight(10) + "Enter brand name: ");
                 input = Console.ReadLine();
-                if(String.IsNullOrEmpty(input))
+                if (userExit(input)) { Environment.Exit(0); }
+                if (String.IsNullOrEmpty(input))
                 {
                     try
                     {
@@ -114,6 +138,7 @@ void addAsset()
             case 2:
                 Console.Write("".PadRight(10) + "Enter model name: ");
                 input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 if (String.IsNullOrEmpty(input))
                 {
                     try
@@ -134,6 +159,7 @@ void addAsset()
             case 3:
                 Console.Write("".PadRight(10) + "Enter asset price in dollars: ");
                 input= Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 try
                 {
                     price = int.Parse(input);
@@ -161,6 +187,33 @@ void addAsset()
                 date = getDate();
                 i++;
                 break;
+            case 5:
+                Console.WriteLine("".PadRight(10) + "Enter local office: Spain (1) | UK (2) | Sweden (3)");
+                input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
+                try
+                {
+                    office = int.Parse(input);
+                    if (office < 1 || office > 3)
+                    {
+                        try
+                        {
+                            throw new ArgumentOutOfRangeException("Please pick a valid option");
+
+                        }
+                        catch (Exception e) { Console.WriteLine(e.Message); }
+                    }
+                    else
+                    {
+                        office--;
+                        i++;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Input needs to be a number");
+                }
+                break;
             default: break;
 
         }
@@ -168,11 +221,11 @@ void addAsset()
 
     if (type == 1)
     {
-        products.Add(new Phone(brand, model, price, date));
+        products.Add(new Phone(brand, model, price, date, offices[office]));
     }
-    else if(type == 2)
+    else if (type == 2)
     {
-        products.Add(new Computer(brand, model, price, date));
+        products.Add(new Computer(brand, model, price, date, offices[office]));
     }
 
 }
@@ -180,6 +233,7 @@ void addAsset()
 DateTime getDate()
 {
     int j = 0;
+    string input;
     int y = 0, m = 0, d = 0;
 
     while (j < 3)
@@ -188,26 +242,32 @@ DateTime getDate()
         {
             case 0:
                 Console.Write("".PadRight(20) + "Year: ");
+                input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 try
                 {
-                    y = int.Parse(Console.ReadLine());
+                    y = int.Parse(input);
                     j++;
                 } catch (FormatException) { Console.WriteLine("Input needs to be a number"); }
                 break;
             case 1:
                 Console.Write("".PadRight(20) + "Month: ");
+                input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 try
                 {
-                    m = int.Parse(Console.ReadLine());
+                    m = int.Parse(input);
                     j++;
                 }
                 catch (FormatException) { Console.WriteLine("Input needs to be a number"); }
                 break;
             case 2:
                 Console.Write("".PadRight(20) + "Day: ");
+                input = Console.ReadLine();
+                if (userExit(input)) { Environment.Exit(0); }
                 try
                 {
-                    d = int.Parse(Console.ReadLine());
+                    d = int.Parse(input);
                     j++;
                 }
                 catch (FormatException) { Console.WriteLine("Input needs to be a number"); }

@@ -13,6 +13,7 @@ namespace AssetTracking
         public string model { get; set; }
         public int price { get; set; }
         public DateTime purchaseDate { get; set; }
+        public Office office { get; set; }
 
     }
 
